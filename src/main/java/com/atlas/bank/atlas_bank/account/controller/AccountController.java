@@ -2,15 +2,11 @@ package com.atlas.bank.atlas_bank.account.controller;
 
 import com.atlas.bank.atlas_bank.account.model.Account;
 import com.atlas.bank.atlas_bank.account.service.IAccountService;
-import com.atlas.bank.atlas_bank.transaction.model.Transaction;
-import com.atlas.bank.atlas_bank.transaction.service.ITransactionQueryService;
-import com.atlas.bank.atlas_bank.transaction.service.ITransferService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -19,8 +15,6 @@ import java.util.List;
 public class AccountController {
 
     private final IAccountService accountService;
-    private final ITransferService transferService;
-    private final ITransactionQueryService transactionQueryService;
 
     @PostMapping
     public ResponseEntity<Account> create(@RequestBody Account account){
@@ -36,9 +30,6 @@ public class AccountController {
     public ResponseEntity<Account> findById(@PathVariable Long id){
         return ResponseEntity.ok(accountService.findById(id));
     }
-
-
-
 }
 
 
