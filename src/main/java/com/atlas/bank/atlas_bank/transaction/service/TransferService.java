@@ -1,10 +1,10 @@
-package com.atlas.bank.atlas_bank.service;
+package com.atlas.bank.atlas_bank.transaction.service;
 
-import com.atlas.bank.atlas_bank.model.Account;
-import com.atlas.bank.atlas_bank.model.Transaction;
-import com.atlas.bank.atlas_bank.reporitory.AccountRepository;
-import com.atlas.bank.atlas_bank.reporitory.TransactionRepository;
-import com.atlas.bank.atlas_bank.service.fee.FeeCalculator;
+import com.atlas.bank.atlas_bank.account.model.Account;
+import com.atlas.bank.atlas_bank.transaction.model.Transaction;
+import com.atlas.bank.atlas_bank.account.repository.AccountRepository;
+import com.atlas.bank.atlas_bank.transaction.reporitory.TransactionRepository;
+import com.atlas.bank.atlas_bank.transaction.service.fee.FeeCalculator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,11 +14,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class TransferService {
+public class TransferService implements ITransferService {
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
     private final List<FeeCalculator> feeCalculators;
 
+    @Override
     @Transactional
     public Transaction execute(Long fromId, Long toId, BigDecimal amount){
         //buscar cuentas
