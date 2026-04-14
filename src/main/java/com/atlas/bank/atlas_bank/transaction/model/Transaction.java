@@ -18,8 +18,9 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String type;
+    private TransactionType type;
 
     @Column(name = "source_account_id")
     private Long sourceAccountId;
@@ -33,8 +34,9 @@ public class Transaction {
     @Column(nullable = false)
     private BigDecimal fee;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String status;
+    private TransactionStatus status;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -42,6 +44,6 @@ public class Transaction {
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
-        if (this.status == null) this.status = "EXECUTED";
+        if (this.status == null) this.status = TransactionStatus.EXECUTED;
     }
 }
