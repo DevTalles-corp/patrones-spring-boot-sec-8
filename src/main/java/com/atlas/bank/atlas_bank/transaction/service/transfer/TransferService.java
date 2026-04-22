@@ -9,8 +9,12 @@ import com.atlas.bank.atlas_bank.transaction.model.Transaction;
 import com.atlas.bank.atlas_bank.account.repository.AccountRepository;
 import com.atlas.bank.atlas_bank.transaction.repository.TransactionRepository;
 import com.atlas.bank.atlas_bank.transaction.service.event.TransactionExecutedEvent;
+import com.atlas.bank.atlas_bank.transaction.service.exception.FraudCheckException;
 import com.atlas.bank.atlas_bank.transaction.service.factory.TransactionFactory;
 import com.atlas.bank.atlas_bank.transaction.service.fee.FeeCalculator;
+import com.atlas.bank.atlas_bank.transaction.service.fraud.FraudCheckResult;
+import com.atlas.bank.atlas_bank.transaction.service.fraud.FraudChecker;
+import com.atlas.bank.atlas_bank.transaction.validation.chain.TransferValidator;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,17 +27,19 @@ public class TransferService extends TransactionProcessor<TransferContext> imple
     private final AccountRepository accountRepository;
     private final List<FeeCalculator> feeCalculators;
     private final ApplicationEventPublisher eventPublisher;
+    private final List<TransferValidator> validators;
+
 
     public TransferService(TransactionRepository transactionRepository,
                            AccountRepository accountRepository,
                            List<FeeCalculator> feeCalculators,
-                           ApplicationEventPublisher eventPublisher
-
-    ) {
+                           ApplicationEventPublisher eventPublisher,
+                           List<TransferValidator> validators) {
         super(transactionRepository);
         this.accountRepository = accountRepository;
         this.feeCalculators = feeCalculators;
         this.eventPublisher = eventPublisher;
+        this.validators = validators;
     }
 
     @Override
@@ -61,15 +67,7 @@ public class TransferService extends TransactionProcessor<TransferContext> imple
 
     @Override
     protected void validate(TransferContext ctx) {
-        if (ctx.from().getStatus() != AccountStatus.ACTIVE) {
-            throw new AccountNotActiveException(ctx.from().getId(), ctx.from().getStatus().name());
-        }
-        if (ctx.to().getStatus() != AccountStatus.ACTIVE) {
-            throw new AccountNotActiveException(ctx.to().getId(), ctx.to().getStatus().name());
-        }
-        if (ctx.from().getBalance().compareTo(ctx.amount()) < 0) {
-            throw new InsufficientFundsException(ctx.from().getId(), ctx.from().getBalance(), ctx.amount());
-        }
+        validators.forEach( validator -> validator.validate(ctx));
     }
 
     @Override
