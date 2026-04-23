@@ -1,6 +1,7 @@
 package com.atlas.bank.atlas_bank.account.service;
 
 import com.atlas.bank.atlas_bank.account.model.Account;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
@@ -10,12 +11,19 @@ import java.util.List;
 
 @Slf4j
 @Component
+@Primary
 public class AuditableAccountService implements IAccountService{
 
     private final IAccountService delegate;
 
     public AuditableAccountService(@Qualifier("accountService") IAccountService delegate) {
         this.delegate = delegate;
+    }
+
+    @PostConstruct
+    public void init()
+    {
+        log.info("Clase real del accountService: {}", delegate.getClass().getName());
     }
 
     @Override
