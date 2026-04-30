@@ -1,5 +1,8 @@
 package com.atlas.bank.atlas_bank.account.model;
 
+import com.atlas.bank.atlas_bank.shared.model.Currency;
+import com.atlas.bank.atlas_bank.shared.model.Money;
+import com.atlas.bank.atlas_bank.transaction.exception.InsufficientFundsException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,8 +33,15 @@ public class Account {
     @Column(nullable = false, length = 20)
     private AccountType type; //SAVING, CHECKING
 
-    @Column(nullable = false)
-    private BigDecimal balance;
+
+    @Embedded
+    @AttributeOverrides(
+            {
+                    @AttributeOverride(name = "amount", column = @Column(name = "balance", nullable = false)),
+                    @AttributeOverride(name = "currency", column = @Column(name = "currency", nullable = false, length = 3))
+            }
+    )
+    private Money balance;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -40,13 +50,53 @@ public class Account {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "customer_id")
+    private Long customerId;
+
     @PrePersist
     public void prePersist(){
         this.createdAt = LocalDateTime.now();
-        if(status==null) status= AccountStatus.ACTIVE;
-        if(balance==null) balance=BigDecimal.ZERO;
+        if(status==null) status = AccountStatus.ACTIVE;
+        if(balance==null) balance = Money.zero(Currency.ARS);
     }
+
+    public void deposit(Money amount){
+        if(amount.isNegative()){
+            throw new IllegalArgumentException("El monto a depositar no puede ser negativo");
+        }
+
+        balance = balance.add(amount);
+    }
+
+    public void withdraw(Money amount){
+        if(amount.isNegative()){
+            throw new IllegalArgumentException("El monto a retirar no puede ser negativo");
+        }
+
+        if(balance.isLessThan(amount)){
+            throw new InsufficientFundsException(id, balance.getAmount(), amount.getAmount());
+        }
+
+        balance = balance.subtract(amount);
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
