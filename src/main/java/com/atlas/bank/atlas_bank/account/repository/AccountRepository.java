@@ -1,6 +1,6 @@
 package com.atlas.bank.atlas_bank.account.repository;
 
-import com.atlas.bank.atlas_bank.account.model.Account;
+import com.atlas.bank.atlas_bank.domain.model.account.Account;
 import com.atlas.bank.atlas_bank.application.port.out.AccountRepositoryPort;
 import org.springframework.data.jpa.repository.JpaRepository;
 

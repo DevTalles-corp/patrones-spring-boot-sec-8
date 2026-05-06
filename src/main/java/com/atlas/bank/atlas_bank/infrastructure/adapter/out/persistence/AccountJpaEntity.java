@@ -1,11 +1,10 @@
-package com.atlas.bank.atlas_bank.account.model;
+package com.atlas.bank.atlas_bank.infrastructure.adapter.out.persistence;
 
 import com.atlas.bank.atlas_bank.domain.model.account.AccountStatus;
 import com.atlas.bank.atlas_bank.domain.model.account.AccountType;
 import com.atlas.bank.atlas_bank.domain.model.shared.Currency;
 import com.atlas.bank.atlas_bank.shared.model.Email;
 import com.atlas.bank.atlas_bank.shared.model.Money;
-import com.atlas.bank.atlas_bank.domain.exception.InsufficientFundsException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +16,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Account {
+public class AccountJpaEntity {
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
@@ -34,21 +34,18 @@ public class Account {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private AccountType type; //SAVING, CHECKING
-
+    private AccountType type;
 
     @Embedded
-    @AttributeOverrides(
-            {
-                    @AttributeOverride(name = "amount", column = @Column(name = "balance", nullable = false)),
-                    @AttributeOverride(name = "currency", column = @Column(name = "currency", nullable = false, length = 3))
-            }
-    )
+    @AttributeOverrides({
+            @AttributeOverride(name = "amount", column = @Column(name = "balance", nullable = false)),
+            @AttributeOverride(name = "currency", column = @Column(name = "currency", nullable = false, length = 3))
+    })
     private Money balance;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private AccountStatus status; //ACTIVE, CLOSED, FROZEN
+    private AccountStatus status;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -57,60 +54,9 @@ public class Account {
     private Long customerId;
 
     @PrePersist
-    public void prePersist(){
+    public void prePersist() {
         this.createdAt = LocalDateTime.now();
-        if(status==null) status = AccountStatus.ACTIVE;
-        if(balance==null) balance = Money.zero(Currency.ARS);
+        if (status == null) status = AccountStatus.ACTIVE;
+        if (balance == null) balance = Money.zero(Currency.ARS);
     }
-
-    public void deposit(Money amount){
-        if(amount.isNegative()){
-            throw new IllegalArgumentException("El monto a depositar no puede ser negativo");
-        }
-
-        balance = balance.add(amount);
-    }
-
-    public void withdraw(Money amount){
-        if(amount.isNegative()){
-            throw new IllegalArgumentException("El monto a retirar no puede ser negativo");
-        }
-
-        if(balance.isLessThan(amount)){
-            throw new InsufficientFundsException(id, balance.getAmount(), amount.getAmount());
-        }
-
-        balance = balance.subtract(amount);
-    }
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

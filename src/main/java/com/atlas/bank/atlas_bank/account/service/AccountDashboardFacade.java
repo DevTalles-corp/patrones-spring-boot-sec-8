@@ -1,13 +1,10 @@
 package com.atlas.bank.atlas_bank.account.service;
 
-import com.atlas.bank.atlas_bank.account.dto.AccountMapper;
 import com.atlas.bank.atlas_bank.account.dto.DashboardResponse;
-import com.atlas.bank.atlas_bank.account.model.Account;
+import com.atlas.bank.atlas_bank.domain.model.account.Account;
 import com.atlas.bank.atlas_bank.transaction.dto.TransactionMapper;
 import com.atlas.bank.atlas_bank.transaction.dto.TransactionResponse;
 import com.atlas.bank.atlas_bank.transaction.service.ITransactionQueryService;
-import com.atlas.bank.atlas_bank.transaction.service.fraud.FraudCheckResult;
-import com.atlas.bank.atlas_bank.transaction.service.fraud.FraudChecker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

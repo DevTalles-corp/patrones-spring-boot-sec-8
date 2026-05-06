@@ -1,7 +1,7 @@
 package com.atlas.bank.atlas_bank.account.service;
 
 import com.atlas.bank.atlas_bank.domain.exception.AccountNotFoundException;
-import com.atlas.bank.atlas_bank.account.model.Account;
+import com.atlas.bank.atlas_bank.domain.model.account.Account;
 import com.atlas.bank.atlas_bank.account.repository.DomainAccountRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
