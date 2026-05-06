@@ -1,12 +1,10 @@
 package com.atlas.bank.atlas_bank.transaction.service.transfer;
 
-import com.atlas.bank.atlas_bank.account.exception.AccountNotFoundException;
+import com.atlas.bank.atlas_bank.domain.exception.AccountNotFoundException;
 import com.atlas.bank.atlas_bank.account.model.Account;
-import com.atlas.bank.atlas_bank.account.repository.DomainAccountRepository;
 import com.atlas.bank.atlas_bank.application.port.in.TransferMoneyUseCase;
 import com.atlas.bank.atlas_bank.application.port.out.AccountRepositoryPort;
 import com.atlas.bank.atlas_bank.transaction.model.Transaction;
-import com.atlas.bank.atlas_bank.account.repository.AccountRepository;
 import com.atlas.bank.atlas_bank.transaction.repository.TransactionRepository;
 import com.atlas.bank.atlas_bank.transaction.service.domain.TransferDomainService;
 import com.atlas.bank.atlas_bank.transaction.service.factory.TransactionFactory;
